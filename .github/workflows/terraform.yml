@@ -52,7 +52,7 @@ jobs:
         TF_VAR_web_admin_password: ${{ secrets.DEV_WEB_PASSWORD }}
         TF_VAR_app_admin_password: ${{ secrets.DEV_APP_PASSWORD }}
         TF_VAR_db_admin_password:  ${{ secrets.DEV_DB_PASSWORD }}
-
+        TF_VAR_env_prefix: "dev"
   # ==========================================
   # 🚀 JOB 2: PRODUCTION DEPLOYMENT PIPELINE
   # ==========================================
@@ -94,3 +94,4 @@ jobs:
         TF_VAR_web_admin_password: "ProdWebSecureP@ss99"  
         TF_VAR_app_admin_password: "ProdAppSecureP@ss88"  
         TF_VAR_db_admin_password:  ${{ secrets.PROD_DB_PASSWORD }}
+        TF_VAR_env_prefix: "prod"
