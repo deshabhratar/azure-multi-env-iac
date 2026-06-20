@@ -1,13 +1,13 @@
-# ==========================================
+
 # 1. SCRIPTS MODULE
-# ==========================================
+
 module "scripts" {
   source = "../../Modules/scripts"
 }
 
-# ==========================================
+
 # 2. NETWORKING MODULE
-# ==========================================
+
 module "Networking" {
   source              = "../../Modules/Networking"
   vnet_name           = "prod-vnet" # Production network tracking name
@@ -22,9 +22,9 @@ module "Networking" {
   }
 }
 
-# ==========================================
+
 # 3. APPLICATION GATEWAY (Public Front Door)
-# ==========================================
+
 module "application_gateway" {
   source              = "../../Modules/ApplicationGateway"
   appgw_name          = "prod-web-appgw"
