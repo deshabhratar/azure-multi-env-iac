@@ -7,7 +7,7 @@ on:
       - main
 
 permissions:
-  id-token: write    # 🔑 CRITICAL: Gives the runner permission to fetch OIDC tokens from Azure
+  id-token: write    # 🔑 REQUIRED: Grants permission to fetch OIDC tokens from Azure Entra ID
   contents: read     # Allows the runner to pull your code from the repository
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./environments/dev # 🎯 Binds execution to the Dev folder
+        working-directory: ./environments/dev # 🎯 Binds execution to the Dev directory
     steps:
     - name: Checkout Source Code
       uses: actions/checkout@v4
@@ -40,20 +40,24 @@ jobs:
     - name: Execute Dev Infrastructure Automation
       run: |
         terraform init
-        terraform apply -auto-approve
+        terraform apply -input=false -auto-approve
       env:
-        # Pass authentication credentials down to the Azure Provider
+        # Pass authentication credentials down to the Azure Provider plugin
         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         ARM_USE_OIDC: true
         
-        # 🔐 INJECTING SECRETS VIA TF_VAR MECHANISM
+        # 🔐 Sensitive VM/DB Admin Passwords fetched securely from GitHub Secrets
         TF_VAR_web_admin_password: ${{ secrets.DEV_WEB_PASSWORD }}
         TF_VAR_app_admin_password: ${{ secrets.DEV_APP_PASSWORD }}
         TF_VAR_db_admin_password:  ${{ secrets.DEV_DB_PASSWORD }}
+
+        # 🏗️ Structural Environment Parameters (Validated via local plan)
         TF_VAR_env_prefix: "dev"
-        TF_VAR_location: "eastus"
+        TF_VAR_location: "centralus"
+        TF_VAR_resource_group_name: "rg-pratik-dev-new"
+
   # ==========================================
   # 🚀 JOB 2: PRODUCTION DEPLOYMENT PIPELINE
   # ==========================================
@@ -63,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./environments/prod # 🎯 Binds execution to the Prod folder
+        working-directory: ./environments/prod # 🎯 Binds execution to the Prod directory
     steps:
     - name: Checkout Source Code
       uses: actions/checkout@v4
@@ -83,17 +87,20 @@ jobs:
     - name: Execute Prod Infrastructure Automation
       run: |
         terraform init
-        terraform apply -auto-approve
+        terraform apply -input=false -auto-approve
       env:
-        # Pass authentication credentials down to the Azure Provider
+        # Pass authentication credentials down to the Azure Provider plugin
         ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         ARM_USE_OIDC: true
         
-        # 🔐 INJECTING SECRETS VIA TF_VAR MECHANISM
+        # 🔐 Production tier passwords 
         TF_VAR_web_admin_password: "ProdWebSecureP@ss99"  
         TF_VAR_app_admin_password: "ProdAppSecureP@ss88"  
         TF_VAR_db_admin_password:  ${{ secrets.PROD_DB_PASSWORD }}
+
+        # 🏗️ Structural Environment Parameters matching Production standards
         TF_VAR_env_prefix: "prod"
-        TF_VAR_location: "eastus"
+        TF_VAR_location: "centralus"
+        TF_VAR_resource_group_name: "rg-pratik-prod-new"
