@@ -57,6 +57,7 @@ jobs:
         TF_VAR_env_prefix: "dev"
         TF_VAR_location: "centralus"
         TF_VAR_resource_group_name: "rg-pratik-dev-new"
+        TF_VAR_sku: "Standard_DC1ds_v3"
 
   # ==========================================
   # 🚀 JOB 2: PRODUCTION DEPLOYMENT PIPELINE
@@ -104,3 +105,4 @@ jobs:
         TF_VAR_env_prefix: "prod"
         TF_VAR_location: "centralus"
         TF_VAR_resource_group_name: "rg-pratik-prod-new"
+        TF_VAR_sku: "Standard_DC1ds_v3"
