@@ -1,13 +1,13 @@
-# ==========================================
+
 # 1. SCRIPTS MODULE
-# ==========================================
+
 module "scripts" {
   source = "../../Modules/scripts"
 }
 
-# ==========================================
+
 # 2. NETWORKING MODULE
-# ==========================================
+
 module "Networking" {
   source              = "../../Modules/Networking"
   vnet_name           = "dev-vnet"
@@ -22,39 +22,39 @@ module "Networking" {
   }
 }
 
-# ==========================================
+
 # 3. APPLICATION GATEWAY (Public Front Door)
-# ==========================================
+
 module "application_gateway" {
   source              = "../../Modules/ApplicationGateway"
   appgw_name          = "dev-web-appgw"
   gateway_subnet_id   = module.Networking.gateway_subnet_id 
   resource_group_name = module.Networking.resource_group_name
   
-  # 🛠️ FIXED: Reads directly from local variables
+
   location            = var.location
 
   depends_on = [module.Networking]
 }
 
-# ==========================================
+
 # 4. APP TIER PRIVATE LOAD BALANCER
-# ==========================================
+
 module "app_load_balancer" {
   source              = "../../Modules/loadbalancer"
   lb_name             = "dev-app-lb"
   subnet_id           = module.Networking.app_subnet_id
   resource_group_name = module.Networking.resource_group_name
   
-  # 🛠️ FIXED: Reads directly from local variables
+
   location            = var.location
 
   depends_on = [module.Networking]
 }
 
-# ==========================================
+
 # 5. WEB COMPUTE TIER (Nginx Scaleset)
-# ==========================================
+
 module "web_compute" {
   source              = "../../Modules/compute"
   vmss_name           = "dev-web-vmss"
@@ -66,14 +66,13 @@ module "web_compute" {
   subnet_id           = module.Networking.web_subnet_id
   sku                 = var.sku
   admin_password      = var.web_admin_password
-  
-  # 🛠️ FIXED: Reads directly from local variables
+
   location            = var.location
 }
 
-# ==========================================
+
 # 6. APP COMPUTE TIER (Flask Scaleset)
-# ==========================================
+
 module "app_compute" {
   source              = "../../Modules/compute"
   vmss_name           = "dev-app-vmss"
@@ -86,13 +85,13 @@ module "app_compute" {
   sku                 = var.sku
   admin_password      = var.app_admin_password
   
-  # 🛠️ FIXED: Reads directly from local variables
+
   location            = var.location
 }
 
-# ==========================================
+
 # 7. PRIVATE DATABASE TIER
-# ==========================================
+
 module "database" {
   source              = "../../Modules/database"
   sql_server_name     = "dev-sqlserver-pratik-01" 
@@ -101,7 +100,7 @@ module "database" {
   private_dns_zone_id = module.Networking.private_dns_zone_id
   db_admin_password   = var.db_admin_password
   
-  # 🛠️ FIXED: Reads directly from local variables
+
   location            = var.location
 
   depends_on = [module.Networking]
